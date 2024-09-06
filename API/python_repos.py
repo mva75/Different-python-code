@@ -13,13 +13,19 @@ print("Total repositories:", response_dict['total_count'])
 # Анализ информации о репозиториях.
 repo_dicts = response_dict['items']
 
-names, stars = [], []
+names, plot_dicts = [], []
 for repo_dict in repo_dicts:
     names.append(repo_dict['name'])
-    stars.append(repo_dict['stargazers_count'])
+    plot_dict = {
+        'value': repo_dict['stargazers_count'],
+        'label': repo_dict['description'],
+        'xlink': repo_dict['html_url'],
+        }
+    plot_dicts.append(plot_dict)
 # Построение визуализации.
 my_style = LS('#333366', base_style=LCS)
 my_config = pygal.Config()
+my_config.force_uri_protocol = 'http'
 my_config.x_label_rotation = 45
 my_config.show_legend = False
 my_config.title_font_size = 24
@@ -31,5 +37,5 @@ my_config.width = 1000
 chart = pygal.Bar(my_config, style=my_style)
 chart.title = 'Most-Starred Python Projects on GitHub'
 chart.x_labels = names
-chart.add('', stars)
+chart.add('', plot_dicts)
 chart.render_to_file('python_repos.svg')
